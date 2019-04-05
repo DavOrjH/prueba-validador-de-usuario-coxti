@@ -6,6 +6,10 @@ var fs = require("fs");
 var iconv = require("iconv-lite");
 const router = express.Router();
 var questions = require('./question.js');
+var bodyParser = require('body-parser');
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true })); 
+
 
 
 //  Manages response in the server to questions request from client and returns JSON with statement and options
@@ -20,13 +24,15 @@ router.get('/getQuestions',(req,res) => {
 })
 
 //  Manages response from client i the front and process the answers opposite user data
-app.use('/apis',router);
+
 router.post('/getUserResponse',(req,res) => {
-    var input = req.body
+    var input = req.body;
     var inputUser = fs.readFileSync("INFORMACION.txt",{encoding:"binary"});
-    var outputUser = iconv.decode(inputUser,"ISO-8859-1"); 
-    
-    console.log(outputUser);
+    var outputUser = iconv.decode(inputUser,"ISO-8859-1");
+    var output = input
+
+    res.send(input)
+    console.log(req.body);
 })
 
 

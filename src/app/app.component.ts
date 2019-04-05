@@ -1,5 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import { HttpClient} from '@angular/common/http';
+import { HttpClient, HttpHeaders} from '@angular/common/http';
+
+const httpOptions = {
+  headers: new HttpHeaders({
+    'Content-Type':  'application/json'
+  })
+};
 
 @Component({
   selector: 'app-root',
@@ -10,7 +16,7 @@ export class AppComponent implements OnInit {
 
   questions:any = [];
   model:any[] = [];
-  response:any[] = [{}];
+  response:any[] = [];
 
   ngOnInit(){
     this.init()  
@@ -34,15 +40,15 @@ export class AppComponent implements OnInit {
   validateUser(){
     let index = 0;
     this.questions.forEach(question=>{
-      this.response.push({_topic:question._topic, _userAnswer:this.model[index]})
+      this.response.push({"_topic":question._topic, "_userAnswer":this.model[index]})
       index++
     });
-
-    let body = JSON.stringify(this.response)
+    console.log(this.response);
+    let body = this.response;
     
-    let headers = {'Content-Type':'text/plain; charset=ISO-8859-1'};
+       
 
-    this.http.post('http://localhost:8080/apis/getUserResponse',body,{headers,responseType: 'text'}).subscribe(
+    this.http.post('http://localhost:8080/apis/getUserResponse',body ,httpOptions).subscribe(
       res =>{
         //handle response
         
