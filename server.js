@@ -1,18 +1,21 @@
 
-const express = require('express');
+const express = require('express'); // express server
 const path = require('path');
 const app = express();
-var fs = require("fs");
-var iconv = require("iconv-lite");
-const router = express.Router();
+var fs = require("fs");    // file system manager
+var iconv = require("iconv-lite");  // charset converter
+const router = express.Router();    // routing on the API
 var questions = require('./question.js');
-var bodyParser = require('body-parser');
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true })); 
+var bodyParser = require('body-parser');   // support json encoded bodies
+app.use(bodyParser.json()); 
+app.use(bodyParser.urlencoded({ extended: true }));   // support encoded bodies
 
 
 
-//  Manages response in the server to questions request from client and returns JSON with statement and options
+/**
+ *  Manages response in the server to questions
+ *  request from client and returns JSON with statement and options
+ */
 app.use('/apis',router);
 router.get('/getQuestions',(req,res) => {
     var inputQuestions = fs.readFileSync("PREGUNTAS.txt",{encoding:"binary"});
@@ -23,24 +26,26 @@ router.get('/getQuestions',(req,res) => {
     res.send(output);   
 })
 
-//  Manages response from client i the front and process the answers opposite user data
+/**
+ * Manages the validation request from client in the front
+ *  and process the answers opposite user data
+ */
 
 router.post('/getUserResponse',(req,res) => {
     var input = req.body;
     var inputUser = fs.readFileSync("INFORMACION.txt",{encoding:"binary"});
     var outputUser = iconv.decode(inputUser,"ISO-8859-1");
-    var output = input
-
-    res.send(input)
-    console.log(req.body);
+    var output = questions.validateUserRequest(outputUser,input)
+    res.send(output)    
 })
 
-
+// Use express to define the directory to serve generated with Angular
 
 app.use(express.static(__dirname + '/dist/client-validator'));
 
 app.get('/*', function(req,res) {
     
+ // Launch the server and listen on the default port 8080   
 res.sendFile(path.join(__dirname+'/dist/client-validatorindex.html'));
 });
 

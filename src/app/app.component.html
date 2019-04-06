@@ -1,5 +1,5 @@
 
-<div>
+<div *ngIf="isCharged && !isVerified">
   <div *ngFor="let question of questions;index as i">
       <form >
           <label>{{question._statement}}</label>
@@ -10,4 +10,12 @@
     </div>
     
     <button (click)="validateUser()">Resultado</button>
+</div>
+
+<div *ngIf="!isCharged">
+  <p>Cargando ...</p>
+</div>
+
+<div *ngIf="isVerified">
+  <p>Usuario verificado, puede continuar</p>
 </div>
